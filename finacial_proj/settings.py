@@ -25,7 +25,7 @@ SECRET_KEY = 'ikufeyqf)utk#m(4tcdba&f^7k#-6^l_x-_pw+w#_4y=6mis4n'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'crawler_app.apps.CrawlerAppConfig',
     'background_task',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
