@@ -37,7 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'crawler_app',
+    'crawler_app.apps.CrawlerAppConfig',
+    'background_task',
 ]
 
 MIDDLEWARE = [
