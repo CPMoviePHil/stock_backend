@@ -34,13 +34,27 @@ class Crawler:
     def save_to_table(table: list):
         for index, item in enumerate(table):
             if index != 0:
+                stock_name = item[0].replace(' ', '')
+                buy_price = item[1].replace(',', '')
+                sell_price = item[2].replace(',', '')
+                average_buy_price = None
+                average_sell_price = None
+                if item[3] == '-':
+                    average_buy_price = None
+                if item[3] != '-':
+                    average_buy_price = float(item[3])
+                if item[4] == '-':
+                    average_sell_price = None
+                if item[4] != '-':
+                    average_sell_price = float(item[4])
+                net_buy = item[5].replace(',', '')
                 PCHStock.objects.create(
-                    stock_name=item[0],
-                    buy_price=item[1],
-                    sell_price=item[2],
-                    average_buy_price=item[3],
-                    average_sell_price=item[4],
-                    net_buy=item[5],
+                    stock_name=stock_name,
+                    buy_price=int(buy_price),
+                    sell_price=int(sell_price),
+                    average_buy_price=average_buy_price,
+                    average_sell_price=average_sell_price,
+                    net_buy=int(net_buy),
                     stock_date=datetime.now().strftime("%Y/%m/%d"),
                     create_datetime=datetime.now(tz=timezone.utc),
                 )

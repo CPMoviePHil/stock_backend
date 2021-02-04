@@ -67,6 +67,21 @@ def search_stock_by_condition(request):
         raise e
 
 
+@csrf_exempt
+def replace_space(request):
+    try:
+        if request.method == 'POST':
+            data = json.loads(request.body.decode('utf-8'))
+            items = PCHStock.objects.all()
+            for item in items:
+                temp1 = str(item.average_buy_price)
+                temp2 = str(item.average_sell_price)
+                temp3 = str(item.net_buy)
+                item.save()
+    except Exception as e:
+        raise e
+
+
 def list_filter_by_date(items, search_date="", search_date_start="", search_date_end=""):
     if search_date != "":
         search_date = datetime.strptime(search_date.split(' ')[0], '%Y/%m/%d')
