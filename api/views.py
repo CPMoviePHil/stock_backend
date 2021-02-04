@@ -36,15 +36,57 @@ def stock_by_name(request):
         raise e
 
 
-def list_filter_by_date(items, search_date):
-    search_date = datetime.strptime(search_date.split(' ')[0], '%Y/%m/%d')
-    start_datetime = search_date.replace(hour=0, minute=0, second=0)
-    end_datetime = search_date.replace(hour=23, minute=59, second=59)
-    list_stock = items.filter(
-        create_datetime__gte=start_datetime,
-        create_datetime__lte=end_datetime
-    )
-    return list_stock
+@csrf_exempt
+def search_stock_by_condition(request):
+    try:
+        if request.method == 'POST':
+            data = json.loads(request.body.decode('utf-8'))
+            if len(data) == 0:
+                return none_response()
+            else:
+                items = PCHStock.objects.all()
+                if 'search_name' in data:
+                    items = items.filter(stock_name=data['search_name'])
+                if 'search_date' in data:
+                    items = list_filter_by_date(items, data['search_date'])
+                if 'search_date_start' in data and 'search_date_end' in data:
+                    items = list_filter_by_date(
+                        items,
+                        "",
+                        data['search_date_start'],
+                        data['search_date_end'],
+                    )
+                if 'sell_price_greater' in data:
+                    items = items.filter(sell_price__gte=data['sell_price_greater'])
+                if 'sell_price_less' in data:
+                    items = items.filter(sell_price__lte=data['sell_price_less'])
+                if 'sell_price_equal' in data:
+                    items = items.filter(sell_price=data['sell_price_equal'])
+                return parsed_list(items)
+    except Exception as e:
+        raise e
+
+
+def list_filter_by_date(items, search_date="", search_date_start="", search_date_end=""):
+    if search_date != "":
+        search_date = datetime.strptime(search_date.split(' ')[0], '%Y/%m/%d')
+        start_datetime = search_date.replace(hour=0, minute=0, second=0)
+        end_datetime = search_date.replace(hour=23, minute=59, second=59)
+        list_stock = items.filter(
+            create_datetime__gte=start_datetime,
+            create_datetime__lte=end_datetime
+        )
+        return list_stock
+    if search_date_start != "" and search_date_end != "":
+        temp_search_date_start = datetime.strptime(search_date_start.split(' ')[0], '%Y/%m/%d')
+        start_datetime = temp_search_date_start.replace(hour=0, minute=0, second=0)
+        temp_search_date_end = datetime.strptime(search_date_end.split(' ')[0], '%Y/%m/%d')
+        end_datetime = temp_search_date_end.replace(hour=23, minute=59, second=59)
+        list_stock = items.filter(
+            create_datetime__gte=start_datetime,
+            create_datetime__lte=end_datetime
+        )
+        return list_stock
 
 
 def parsed_list(list_stock):
